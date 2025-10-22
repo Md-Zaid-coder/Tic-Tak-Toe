@@ -1,0 +1,100 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tik Tak Toe</title>
+  <link rel="stylesheet" href="tiktak.css" />
+  
+</head>
+<body>
+    <div class="msg-container hide">
+        <p id="msg">Winner</p>
+        <button id="new-btn">New Game</button>
+    </div>
+    <main>
+    <h1>Tic Tac Toe</h1>
+
+  <div class="game-container">
+    <div class="game">
+    <button class="box"></button>
+    <button class="box"></button>
+    <button class="box"></button>
+    <button class="box"></button>
+    <button class="box"></button>
+    <button class="box"></button>
+    <button class="box"></button>
+    <button class="box"></button>
+    <button class="box"></button>
+   </div> 
+  </div>
+  <button id="reset-btn">Reset Game</button>
+  </main>
+  <script src="tiktak.js"></script>
+  
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tic Tac Toe</title>
+  <link rel="stylesheet" href="tiktak.css" />
+</head>
+<body>
+  <main class="page">
+    <header class="header">
+      <div class="mode-select">
+  <button id="pvp-mode">👥 Player vs Player</button>
+  <button id="ai-mode">🤖 Player vs AI</button>
+</div>
+      <h1>Tic-Tac-Toe</h1>
+
+      <div class="controls">
+        <div class="scoreboard" aria-hidden="false">
+          <div class="score">O: <span id="score-o">0</span></div>
+          <div class="score">X: <span id="score-x">0</span></div>
+          <div class="score">Draws: <span id="score-d">0</span></div>
+        </div>
+
+        <div class="buttons">
+          <button id="reset-btn" class="btn">Reset Board</button>
+          <button id="new-btn" class="btn">New Game</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="board-area">
+      <div id="board" role="grid" aria-label="Tic Tac Toe board">
+        <button class="box" data-index="0" role="gridcell" aria-label="cell 1"></button>
+        <button class="box" data-index="1" role="gridcell" aria-label="cell 2"></button>
+        <button class="box" data-index="2" role="gridcell" aria-label="cell 3"></button>
+        <button class="box" data-index="3" role="gridcell" aria-label="cell 4"></button>
+        <button class="box" data-index="4" role="gridcell" aria-label="cell 5"></button>
+        <button class="box" data-index="5" role="gridcell" aria-label="cell 6"></button>
+        <button class="box" data-index="6" role="gridcell" aria-label="cell 7"></button>
+        <button class="box" data-index="7" role="gridcell" aria-label="cell 8"></button>
+        <button class="box" data-index="8" role="gridcell" aria-label="cell 9"></button>
+      </div>
+    </section>
+
+    <!-- popup / message -->
+    <div class="msg-container hide" id="msg-container" role="status" aria-live="polite">
+      <div class="glow-ring" aria-hidden="true"></div>
+      <p id="msg" class="msg-text">Winner</p>
+      <div class="msg-actions">
+        <button id="new-game-popup" class="btn primary">Play Again</button>
+        <button id="close-popup" class="btn">Close</button>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p class="note">Neon Hacker theme • Built with vanilla JS</p>
+    </footer>
+  </main>
+  <script src="tiktak.js"></script>
+</body>
+</html>
+
