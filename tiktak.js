@@ -1,222 +1,118 @@
-
-
-
-const boxes = Array.from(document.querySelectorAll(".box"));
+const boxes = document.querySelectorAll(".box");
+const msgContainer = document.querySelector(".msg-container");
+const msg = document.querySelector("#msg");
 const resetBtn = document.querySelector("#reset-btn");
-const newBtn = document.querySelector("#new-btn");
-const msgContainer = document.querySelector("#msg-container");
-const popupPlayAgain = document.querySelector("#new-game-popup");
-const popupClose = document.querySelector("#close-popup");
-const msgText = document.querySelector("#msg");
+const newGameBtn = document.querySelector("#new-btn");
 
-const scoreO = document.querySelector("#score-o");
-const scoreX = document.querySelector("#score-x");
-const scoreD = document.querySelector("#score-d");
+// Mode buttons
+const btnAI = document.querySelector("#btn-ai");
+const btnPVP = document.querySelector("#btn-pvp");
 
-let board = Array(9).fill(null);
-let current = "O"; // O always starts
-let running = true;
-let stats = { O: 0, X: 0, D: 0 };
-
-// 🧠 AI FEATURE — mode toggle
-let isAI = true; // set true for AI vs Player, false for 2 Players
+let isAI = false;  // default: Player vs Player
+let board = ["", "", "", "", "", "", "", "", ""];
+let currentPlayer = "O";
+let gameRunning = true;
 
 const winPatterns = [
-  [0,1,2],[3,4,5],[6,7,8],
-  [0,3,6],[1,4,7],[2,5,8],
-  [0,4,8],[2,4,6]
+  [0,1,2], [3,4,5], [6,7,8],
+  [0,3,6], [1,4,7], [2,5,8],
+  [0,4,8], [2,4,6]
 ];
 
-// AUDIO
-const audioCtx = (typeof AudioContext !== "undefined") ? new AudioContext() : null;
-function playPing(color = "neutral") {
-  if (!audioCtx) return;
-  const now = audioCtx.currentTime;
-  const master = audioCtx.createGain();
-  master.gain.value = 0.09;
-  master.connect(audioCtx.destination);
-  let f1 = 720, f2 = 920;
-  if (color === "green") { f1 = 760; f2 = 1040; }
-  else if (color === "red") { f1 = 420; f2 = 620; }
-  else if (color === "gold") { f1 = 520; f2 = 760; }
+// ----------------------------
+// MODE SWITCH (MAIN FIX)
+// ----------------------------
+btnAI.addEventListener("click", () => {
+  isAI = true;
+  resetBoard();
+});
 
-  const o1 = audioCtx.createOscillator();
-  const g1 = audioCtx.createGain();
-  o1.type = "sine"; o1.frequency.value = f1;
-  g1.gain.value = 0;
-  o1.connect(g1); g1.connect(master);
-  const o2 = audioCtx.createOscillator();
-  const g2 = audioCtx.createGain();
-  o2.type = "triangle"; o2.frequency.value = f2;
-  g2.gain.value = 0;
-  o2.connect(g2); g2.connect(master);
-  const a = 0.006, d = 0.18;
-  g1.gain.cancelScheduledValues(now);
-  g1.gain.setValueAtTime(0, now);
-  g1.gain.linearRampToValueAtTime(0.16, now + a);
-  g1.gain.exponentialRampToValueAtTime(0.0001, now + d);
-  g2.gain.cancelScheduledValues(now);
-  g2.gain.setValueAtTime(0, now);
-  g2.gain.linearRampToValueAtTime(0.10, now + a + 0.01);
-  g2.gain.exponentialRampToValueAtTime(0.0001, now + d + 0.03);
-  o1.start(now); o2.start(now + 0.003);
-  o1.stop(now + d + 0.05); o2.stop(now + d + 0.09);
-  setTimeout(() => { try { o1.disconnect(); o2.disconnect(); g1.disconnect(); g2.disconnect(); master.disconnect(); } catch(e){} }, (d + 0.22) * 1000);
-}
+btnPVP.addEventListener("click", () => {
+  isAI = false;
+  resetBoard();
+});
 
-// UI
-function render() {
-  boxes.forEach((btn, idx) => {
-    const val = board[idx];
-    btn.textContent = val ? val : "";
-    btn.disabled = !running || !!board[idx];
-    btn.dataset.value = val ? val : "";
-    btn.classList.remove("win");
-  });
-}
+// ----------------------------
+// GAME LOGIC
+// ----------------------------
+boxes.forEach(box => {
+  box.addEventListener("click", () => makeMove(box));
+});
 
-function updateScoreboard() {
-  scoreO.textContent = stats.O;
-  scoreX.textContent = stats.X;
-  scoreD.textContent = stats.D;
-}
+function makeMove(box) {
+  const index = box.dataset.index;
 
-function hideMessage() {
-  msgContainer.classList.add("hide");
-  msgContainer.classList.remove("pop","glow-green","glow-red","glow-gold");
-  const ring = msgContainer.querySelector(".glow-ring");
-  if (ring) ring.remove();
-}
+  if (board[index] !== "" || !gameRunning) return;
 
-function showMessage(winner, pattern = null) {
-  if (winner === "O") msgText.textContent = `🎉 Player O Wins!`;
-  else if (winner === "X" && isAI) msgText.textContent = `🤖 AI Wins!`;
-  else if (winner === "X") msgText.textContent = `🎉 Player X Wins!`;
-  else msgText.textContent = `It's a draw!`;
+  board[index] = currentPlayer;
+  box.innerText = currentPlayer;
 
-  msgContainer.classList.remove("hide","glow-green","glow-red","glow-gold","pop");
-  if (winner === "O") msgContainer.classList.add("glow-green");
-  else if (winner === "X") msgContainer.classList.add("glow-red");
-  else msgContainer.classList.add("glow-gold");
+  if (checkWinner()) return;
 
-  if (!msgContainer.querySelector(".glow-ring")) {
-    const ring = document.createElement("div");
-    ring.className = "glow-ring";
-    msgContainer.appendChild(ring);
-  }
-  void msgContainer.offsetWidth;
-  msgContainer.classList.add("pop");
+  // SWITCH PLAYER
+  currentPlayer = currentPlayer === "O" ? "X" : "O";
 
-  if (Array.isArray(pattern)) highlightPattern(pattern);
-
-  if (winner === "O") playPing("green");
-  else if (winner === "X") playPing("red");
-  else playPing("gold");
-}
-
-// Logic
-function checkWinner() {
-  for (const pattern of winPatterns) {
-    const [a,b,c] = pattern;
-    if (board[a] && board[a] === board[b] && board[b] === board[c]) {
-      return { winner: board[a], pattern };
-    }
-  }
-  if (board.every(cell => cell !== null)) return { winner: null };
-  return null;
-}
-
-function highlightPattern(pattern){ pattern.forEach(i => boxes[i].classList.add("win")); }
-
-function makeMove(index) {
-  if (!running || board[index]) return;
-  board[index] = current;
-  const result = checkWinner();
-  if (result && result.winner !== undefined) {
-    running = false;
-    if (result.winner) {
-      stats[result.winner] += 1;
-      updateScoreboard();
-      showMessage(result.winner, result.pattern);
-    } else {
-      stats.D += 1;
-      updateScoreboard();
-      showMessage(null);
-    }
-  } else {
-    current = current === "O" ? "X" : "O";
-    render();
-    // 🧠 AI FEATURE: Trigger AI move if enabled
-    if (isAI && current === "X" && running) {
-      setTimeout(aiMove, 500);
-    }
+  // AI MOVE IF MODE IS AI
+  if (isAI && currentPlayer === "X" && gameRunning) {
+    setTimeout(aiMove, 400);
   }
 }
 
-// 🧠 AI FEATURE: Simple smart AI (blocks & wins)
 function aiMove() {
-  const empty = board.map((v,i)=>v?null:i).filter(v=>v!==null);
-  if (!empty.length) return;
+  // Very simple AI: choose a random empty box
+  let empty = board
+    .map((value, index) => (value === "" ? index : null))
+    .filter(v => v !== null);
 
-  // try to win
-  for (const pattern of winPatterns) {
-    const [a,b,c] = pattern;
-    const line = [board[a],board[b],board[c]];
-    if (line.filter(v=>v==="X").length===2 && line.includes(null)) {
-      makeMove(pattern[line.indexOf(null)]);
-      return;
-    }
-  }
-  // block O
-  for (const pattern of winPatterns) {
-    const [a,b,c] = pattern;
-    const line = [board[a],board[b],board[c]];
-    if (line.filter(v=>v==="O").length===2 && line.includes(null)) {
-      makeMove(pattern[line.indexOf(null)]);
-      return;
-    }
-  }
-  // else random
-  const choice = empty[Math.floor(Math.random()*empty.length)];
-  makeMove(choice);
+  if (empty.length === 0) return;
+
+  let choice = empty[Math.floor(Math.random() * empty.length)];
+
+  board[choice] = "X";
+  boxes[choice].innerText = "X";
+
+  if (checkWinner()) return;
+
+  currentPlayer = "O"; // back to human
 }
 
-function resetBoard(keepStats = true) {
-  board = Array(9).fill(null);
-  current = "O";
-  running = true;
-  hideMessage();
-  render();
-  if (!keepStats) {
-    stats = { O:0, X:0, D:0 };
-    updateScoreboard();
+// ----------------------------
+// CHECK WIN / DRAW
+// ----------------------------
+function checkWinner() {
+  for (let pattern of winPatterns) {
+    let [a, b, c] = pattern;
+
+    if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+      showWinner(board[a]);
+      gameRunning = false;
+      return true;
+    }
   }
+
+  if (!board.includes("")) {
+    showWinner("Draw");
+    return true;
+  }
+
+  return false;
 }
 
-// EVENTS
-boxes.forEach((btn, idx) => {
-  btn.addEventListener("click", () => {
-    if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
-    makeMove(idx);
-  });
-});
-resetBtn.addEventListener("click", () => resetBoard(true));
-newBtn.addEventListener("click", () => resetBoard(false));
-popupPlayAgain.addEventListener("click", () => resetBoard(true));
-popupClose.addEventListener("click", () => hideMessage());
+function showWinner(winner) {
+  msgContainer.classList.remove("hide");
+  msg.innerText = winner === "Draw" ? "Match Draw" : `${winner} Wins!`;
+}
 
-// 🧠 AI FEATURE: toggle button (optional)
-// you can add a small toggle button in HTML to switch mode manually
-document.addEventListener("keydown", e=>{
-  if(e.key==="m"){ // press 'm' to switch mode
-    isAI=!isAI;
-    alert(`Mode changed: ${isAI? "Player vs AI 🤖":"2 Player 👥"}`);
-    resetBoard(true);
-  }
-});
+// ----------------------------
+// RESET
+// ----------------------------
+resetBtn.addEventListener("click", resetBoard);
+newGameBtn.addEventListener("click", resetBoard);
 
-resetBoard(true);
-updateScoreboard();
-render();
-
-
+function resetBoard() {
+  board = ["", "", "", "", "", "", "", "", ""];
+  currentPlayer = "O";
+  gameRunning = true;
+  boxes.forEach(b => b.innerText = "");
+  msgContainer.classList.add("hide");
+}
