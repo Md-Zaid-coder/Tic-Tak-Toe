@@ -46,6 +46,7 @@ function makeMove(box) {
 
   board[index] = currentPlayer;
   box.innerText = currentPlayer;
+  box.dataset.value = currentPlayer; 
 
   if (checkWinner()) return;
 
@@ -70,6 +71,7 @@ function aiMove() {
 
   board[choice] = "X";
   boxes[choice].innerText = "X";
+  boxes[choice].dataset.value = "X"; 
 
   if (checkWinner()) return;
 
@@ -113,6 +115,11 @@ function resetBoard() {
   board = ["", "", "", "", "", "", "", "", ""];
   currentPlayer = "O";
   gameRunning = true;
-  boxes.forEach(b => b.innerText = "");
+  boxes.forEach(b => {
+  b.innerText = "";
+  delete b.dataset.value;   // ⭐ remove glow
+});
+
   msgContainer.classList.add("hide");
 }
+
