@@ -823,4 +823,26 @@ body{
   to{ transform: scale(1); opacity:1 }
 }
 
+/* ===== FINAL NEON GLOW USING CLASS (MOST STABLE) ===== */
+
+.box.X{
+  color: #ff4d6d !important;
+  text-shadow:
+    0 0 6px #ff4d6d,
+    0 0 14px #ff4d6d,
+    0 0 30px #ff1744,
+    0 0 60px #ff1744 !important;
+}
+
+.box.O{
+  color: #00ffc8 !important;
+  text-shadow:
+    0 0 6px #00ffc8,
+    0 0 14px #00ffc8,
+    0 0 30px #00ff9d,
+    0 0 60px #00ff9d !important;
+}
+
+
+
 
