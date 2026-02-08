@@ -825,7 +825,7 @@ body{
 
 /* ===== FINAL NEON GLOW USING CLASS (MOST STABLE) ===== */
 
-.box.X{
+/* .box.X{
   color: #ff4d6d !important;
   text-shadow:
     0 0 6px #ff4d6d,
@@ -841,7 +841,7 @@ body{
     0 0 14px #00ffc8,
     0 0 30px #00ff9d,
     0 0 60px #00ff9d !important;
-}
+} */
 
 .difficulty button {
   padding: 8px 14px;
@@ -877,6 +877,7 @@ body{
   color: #ff2bd6;
   text-shadow: 0 0 10px #ff2bd6, 0 0 20px #ff2bd6;
 }
+
 
 
 
