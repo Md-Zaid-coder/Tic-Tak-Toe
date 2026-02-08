@@ -4,24 +4,33 @@ const msg = document.querySelector("#msg");
 const resetBtn = document.querySelector("#reset-btn");
 const newGameBtn = document.querySelector("#new-btn");
 
-// Mode buttons
 const btnAI = document.querySelector("#btn-ai");
 const btnPVP = document.querySelector("#btn-pvp");
 
-let isAI = false;  // default: Player vs Player
+let isAI = false;
 let board = ["", "", "", "", "", "", "", "", ""];
 let currentPlayer = "O";
 let gameRunning = true;
 
+/* -------------------------
+   DIFFICULTY CONTROL
+   change this value
+   0.5 = easy
+   0.7 = medium
+   0.85 = hard
+--------------------------*/
+const AI_SMARTNESS = 0.75;
+
 const winPatterns = [
-  [0,1,2], [3,4,5], [6,7,8],
-  [0,3,6], [1,4,7], [2,5,8],
-  [0,4,8], [2,4,6]
+  [0,1,2],[3,4,5],[6,7,8],
+  [0,3,6],[1,4,7],[2,5,8],
+  [0,4,8],[2,4,6]
 ];
 
-// ----------------------------
-// MODE SWITCH (MAIN FIX)
-// ----------------------------
+
+/* =========================
+   MODE SWITCH
+========================= */
 btnAI.addEventListener("click", () => {
   isAI = true;
   resetBoard();
@@ -32,59 +41,152 @@ btnPVP.addEventListener("click", () => {
   resetBoard();
 });
 
-// ----------------------------
-// GAME LOGIC
-// ----------------------------
+
+/* =========================
+   CLICK HANDLER
+========================= */
 boxes.forEach(box => {
   box.addEventListener("click", () => makeMove(box));
 });
+
 
 function makeMove(box) {
   const index = box.dataset.index;
 
   if (board[index] !== "" || !gameRunning) return;
 
-  board[index] = currentPlayer;
-  box.innerText = currentPlayer;
-  box.classList.add(currentPlayer);
+  playMove(index, currentPlayer);
 
   if (checkWinner()) return;
 
-  // SWITCH PLAYER
   currentPlayer = currentPlayer === "O" ? "X" : "O";
 
-  // AI MOVE IF MODE IS AI
   if (isAI && currentPlayer === "X" && gameRunning) {
-    setTimeout(aiMove, 400);
+    setTimeout(aiMove, 350);
   }
 }
 
+
+/* =========================
+   PLAY MOVE
+========================= */
+function playMove(index, player){
+  board[index] = player;
+  boxes[index].innerText = player;
+  boxes[index].classList.add(player);
+}
+
+
+/* =========================
+   AI MOVE (HYBRID)
+========================= */
 function aiMove() {
-  // Very simple AI: choose a random empty box
-  let empty = board
-    .map((value, index) => (value === "" ? index : null))
-    .filter(v => v !== null);
 
-  if (empty.length === 0) return;
+  let move;
 
-  let choice = empty[Math.floor(Math.random() * empty.length)];
+  // SMART MOVE (minimax)
+  if (Math.random() < AI_SMARTNESS) {
+    move = bestMove();
+  }
+  // RANDOM MISTAKE
+  else {
+    let empty = board
+      .map((v,i)=> v==="" ? i : null)
+      .filter(v=>v!==null);
 
-  board[choice] = "X";
-  boxes[choice].innerText = "X";
-  boxes[choice].classList.add("X");
+    move = empty[Math.floor(Math.random()*empty.length)];
+  }
+
+  playMove(move, "X");
 
   if (checkWinner()) return;
 
-  currentPlayer = "O"; // back to human
+  currentPlayer = "O";
 }
 
-// ----------------------------
-// CHECK WIN / DRAW
-// ----------------------------
-function checkWinner() {
-  for (let pattern of winPatterns) {
-    let [a, b, c] = pattern;
 
+/* =========================
+   MINIMAX (SMART AI)
+========================= */
+function bestMove() {
+
+  let bestScore = -Infinity;
+  let move;
+
+  for (let i = 0; i < 9; i++) {
+    if (board[i] === "") {
+      board[i] = "X";
+      let score = minimax(board, false);
+      board[i] = "";
+
+      if (score > bestScore) {
+        bestScore = score;
+        move = i;
+      }
+    }
+  }
+
+  return move;
+}
+
+
+function minimax(newBoard, isMaximizing) {
+
+  let result = evaluate(newBoard);
+  if (result !== null) return result;
+
+  if (isMaximizing) {
+    let best = -Infinity;
+
+    for (let i=0;i<9;i++){
+      if(newBoard[i]===""){
+        newBoard[i]="X";
+        best = Math.max(best, minimax(newBoard,false));
+        newBoard[i]="";
+      }
+    }
+    return best;
+  }
+
+  else {
+    let best = Infinity;
+
+    for (let i=0;i<9;i++){
+      if(newBoard[i]===""){
+        newBoard[i]="O";
+        best = Math.min(best, minimax(newBoard,true));
+        newBoard[i]="";
+      }
+    }
+    return best;
+  }
+}
+
+
+/* =========================
+   EVALUATE BOARD
+========================= */
+function evaluate(b){
+
+  for(let [a,b1,c] of winPatterns){
+    if(b[a] && b[a]===b[b1] && b[a]===b[c]){
+      if(b[a]==="X") return 10;
+      if(b[a]==="O") return -10;
+    }
+  }
+
+  if(!b.includes("")) return 0;
+
+  return null;
+}
+
+
+/* =========================
+   CHECK WIN
+========================= */
+function checkWinner() {
+
+  for (let [a,b,c] of winPatterns) {
     if (board[a] && board[a] === board[b] && board[a] === board[c]) {
       showWinner(board[a]);
       gameRunning = false;
@@ -100,27 +202,28 @@ function checkWinner() {
   return false;
 }
 
+
 function showWinner(winner) {
   msgContainer.classList.remove("hide");
   msg.innerText = winner === "Draw" ? "Match Draw" : `${winner} Wins!`;
 }
 
-// ----------------------------
-// RESET
-// ----------------------------
+
+/* =========================
+   RESET
+========================= */
 resetBtn.addEventListener("click", resetBoard);
 newGameBtn.addEventListener("click", resetBoard);
 
 function resetBoard() {
-  board = ["", "", "", "", "", "", "", "", ""];
+  board = ["","","","","","","","",""];
   currentPlayer = "O";
   gameRunning = true;
-  boxes.forEach(b => {
-  b.innerText = "";
-  b.classList.remove("X", "O");   // ⭐ remove glow
-});
+
+  boxes.forEach(b=>{
+    b.innerText="";
+    b.classList.remove("X","O");
+  });
 
   msgContainer.classList.add("hide");
 }
-
-
