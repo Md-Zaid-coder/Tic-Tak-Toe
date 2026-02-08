@@ -11,17 +11,7 @@ let isAI = false;
 let board = ["", "", "", "", "", "", "", "", ""];
 let currentPlayer = "O";
 let gameRunning = true;
-let scoreX = 0;
-let scoreO = 0;
 
-let AI_SMARTNESS = 0.75;
-
-const easyBtn = document.querySelector("#easy");
-const mediumBtn = document.querySelector("#medium");
-const hardBtn = document.querySelector("#hard");
-
-const scoreXEl = document.querySelector("#scoreX");
-const scoreOEl = document.querySelector("#scoreO");
 
 
 
@@ -255,4 +245,5 @@ function resetBoard() {
 
   msgContainer.classList.add("hide");
 }
+
 
