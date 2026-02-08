@@ -206,16 +206,9 @@ function checkWinner() {
 }
 
 function showWinner(winner) {
-
-  if (winner === "X") {
-    scoreX++;
-    scoreXEl.innerText = scoreX;
-  }
-
-  if (winner === "O") {
-    scoreO++;
-    scoreOEl.innerText = scoreO;
-  }
+  msgContainer.classList.remove("hide");
+  msg.innerText = winner === "Draw" ? "Match Draw" : `${winner} Wins!`;
+}
 
   msgContainer.classList.remove("hide");
   msg.innerText = winner === "Draw" ? "Match Draw" : `${winner} Wins!`;
@@ -243,6 +236,7 @@ function resetBoard() {
 
   msgContainer.classList.add("hide");
 }
+
 
 
 
