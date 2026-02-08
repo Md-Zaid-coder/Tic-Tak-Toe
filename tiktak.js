@@ -11,6 +11,19 @@ let isAI = false;
 let board = ["", "", "", "", "", "", "", "", ""];
 let currentPlayer = "O";
 let gameRunning = true;
+let scoreX = 0;
+let scoreO = 0;
+
+let AI_SMARTNESS = 0.75;
+
+const easyBtn = document.querySelector("#easy");
+const mediumBtn = document.querySelector("#medium");
+const hardBtn = document.querySelector("#hard");
+
+const scoreXEl = document.querySelector("#scoreX");
+const scoreOEl = document.querySelector("#scoreO");
+
+
 
 /* -------------------------
    DIFFICULTY CONTROL
@@ -202,11 +215,22 @@ function checkWinner() {
   return false;
 }
 
-
 function showWinner(winner) {
+
+  if (winner === "X") {
+    scoreX++;
+    scoreXEl.innerText = scoreX;
+  }
+
+  if (winner === "O") {
+    scoreO++;
+    scoreOEl.innerText = scoreO;
+  }
+
   msgContainer.classList.remove("hide");
   msg.innerText = winner === "Draw" ? "Match Draw" : `${winner} Wins!`;
 }
+
 
 
 /* =========================
@@ -214,6 +238,10 @@ function showWinner(winner) {
 ========================= */
 resetBtn.addEventListener("click", resetBoard);
 newGameBtn.addEventListener("click", resetBoard);
+easyBtn.onclick = () => AI_SMARTNESS = 0.5;
+mediumBtn.onclick = () => AI_SMARTNESS = 0.7;
+hardBtn.onclick = () => AI_SMARTNESS = 0.9;
+
 
 function resetBoard() {
   board = ["","","","","","","","",""];
@@ -227,3 +255,4 @@ function resetBoard() {
 
   msgContainer.classList.add("hide");
 }
+
