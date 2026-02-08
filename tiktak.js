@@ -228,9 +228,7 @@ function showWinner(winner) {
 ========================= */
 resetBtn.addEventListener("click", resetBoard);
 newGameBtn.addEventListener("click", resetBoard);
-easyBtn.onclick = () => AI_SMARTNESS = 0.5;
-mediumBtn.onclick = () => AI_SMARTNESS = 0.7;
-hardBtn.onclick = () => AI_SMARTNESS = 0.9;
+
 
 
 function resetBoard() {
@@ -245,5 +243,6 @@ function resetBoard() {
 
   msgContainer.classList.add("hide");
 }
+
 
 
