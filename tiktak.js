@@ -12,9 +12,6 @@ let board = ["", "", "", "", "", "", "", "", ""];
 let currentPlayer = "O";
 let gameRunning = true;
 
-
-
-
 /* -------------------------
    DIFFICULTY CONTROL
    change this value
@@ -205,15 +202,11 @@ function checkWinner() {
   return false;
 }
 
+
 function showWinner(winner) {
   msgContainer.classList.remove("hide");
   msg.innerText = winner === "Draw" ? "Match Draw" : `${winner} Wins!`;
 }
-
-  msgContainer.classList.remove("hide");
-  msg.innerText = winner === "Draw" ? "Match Draw" : `${winner} Wins!`;
-}
-
 
 
 /* =========================
@@ -221,8 +214,6 @@ function showWinner(winner) {
 ========================= */
 resetBtn.addEventListener("click", resetBoard);
 newGameBtn.addEventListener("click", resetBoard);
-
-
 
 function resetBoard() {
   board = ["","","","","","","","",""];
@@ -236,7 +227,3 @@ function resetBoard() {
 
   msgContainer.classList.add("hide");
 }
-
-
-
-
