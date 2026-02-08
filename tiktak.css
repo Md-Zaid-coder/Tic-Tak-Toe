@@ -784,13 +784,13 @@ body{
 /* ============================= */
 
 /* remove dark base color */
-/* .box{
+.box{
   color: transparent !important;
   font-weight: 900 !important;
-} */
+}
 
 /* Neon X */
-/* .box[data-value="X"]{
+.box[data-value="X"]{
   color: #ff4d6d !important;
 
   text-shadow:
@@ -801,10 +801,10 @@ body{
     0 0 90px #ff1744 !important;
 
   animation: neonPop .25s ease;
-} */
+}
 
 /* Neon O */
-/* .box[data-value="O"]{
+.box[data-value="O"]{
   color: #00ffc8 !important;
 
   text-shadow:
@@ -815,7 +815,7 @@ body{
     0 0 90px #00ff9d !important;
 
   animation: neonPop .25s ease;
-} */
+}
 
 /* smooth pop animation */
 @keyframes neonPop{
@@ -823,26 +823,57 @@ body{
   to{ transform: scale(1); opacity:1 }
 }
 
-/* ========================= */
-/* FINAL FIX – NEON X & O    */
-/* ========================= */
+/* ===== FINAL NEON GLOW USING CLASS (MOST STABLE) ===== */
 
 .box.X{
-  color:#ff4d6d !important;
+  color: #ff4d6d !important;
   text-shadow:
     0 0 6px #ff4d6d,
     0 0 14px #ff4d6d,
-    0 0 28px #ff4d6d,
-    0 0 50px #ff1744;
+    0 0 30px #ff1744,
+    0 0 60px #ff1744 !important;
 }
 
 .box.O{
-  color:#00ffc8 !important;
+  color: #00ffc8 !important;
   text-shadow:
     0 0 6px #00ffc8,
     0 0 14px #00ffc8,
-    0 0 28px #00ffc8,
-    0 0 50px #00ff9d;
+    0 0 30px #00ff9d,
+    0 0 60px #00ff9d !important;
 }
 
+.difficulty button {
+  padding: 8px 14px;
+  margin: 6px;
+  background: #111;
+  border: 2px solid cyan;
+  color: cyan;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
 
+.difficulty button:hover {
+  box-shadow: 0 0 10px cyan;
+}
+
+.scoreboard {
+  margin-top: 10px;
+  font-size: 18px;
+  color: white;
+  display: flex;
+  gap: 25px;
+  justify-content: center;
+}
+
+/* neon glow */
+.X {
+  color: #00eaff;
+  text-shadow: 0 0 10px #00eaff, 0 0 20px #00eaff;
+}
+
+.O {
+  color: #ff2bd6;
+  text-shadow: 0 0 10px #ff2bd6, 0 0 20px #ff2bd6;
+}
