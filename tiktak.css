@@ -784,13 +784,13 @@ body{
 /* ============================= */
 
 /* remove dark base color */
-.box{
+/* .box{
   color: transparent !important;
   font-weight: 900 !important;
-}
+} */
 
 /* Neon X */
-.box[data-value="X"]{
+/* .box[data-value="X"]{
   color: #ff4d6d !important;
 
   text-shadow:
@@ -801,10 +801,10 @@ body{
     0 0 90px #ff1744 !important;
 
   animation: neonPop .25s ease;
-}
+} */
 
 /* Neon O */
-.box[data-value="O"]{
+/* .box[data-value="O"]{
   color: #00ffc8 !important;
 
   text-shadow:
@@ -815,10 +815,34 @@ body{
     0 0 90px #00ff9d !important;
 
   animation: neonPop .25s ease;
-}
+} */
 
 /* smooth pop animation */
 @keyframes neonPop{
   from{ transform: scale(.6); opacity:0 }
   to{ transform: scale(1); opacity:1 }
 }
+
+/* ========================= */
+/* FINAL FIX – NEON X & O    */
+/* ========================= */
+
+.box.X{
+  color:#ff4d6d !important;
+  text-shadow:
+    0 0 6px #ff4d6d,
+    0 0 14px #ff4d6d,
+    0 0 28px #ff4d6d,
+    0 0 50px #ff1744;
+}
+
+.box.O{
+  color:#00ffc8 !important;
+  text-shadow:
+    0 0 6px #00ffc8,
+    0 0 14px #00ffc8,
+    0 0 28px #00ffc8,
+    0 0 50px #00ff9d;
+}
+
+
