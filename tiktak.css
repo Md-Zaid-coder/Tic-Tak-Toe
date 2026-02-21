@@ -346,9 +346,11 @@ body{
     linear-gradient(180deg,#001217 0%, var(--bg) 60%);
   color:var(--accent-text);
   display:flex;
+    flex-direction:column;
   align-items:center;
-  justify-content:center;
-  padding:28px;
+  justify-content:flex-start;
+    overflow-y:auto;
+  padding:28px 0 40px;
 }
 
 /* PAGE CARD */
@@ -877,3 +879,4 @@ body{
   color: #ff2bd6;
   text-shadow: 0 0 10px #ff2bd6, 0 0 20px #ff2bd6;
 }
+
